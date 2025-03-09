@@ -11,6 +11,7 @@ A lightweight cryptocurrency widget that displays real-time prices and provides 
 1. Download prebuilt installer from [Releases](https://github.com/D4rkTT/CryptoWidget/releases)
 2. Install it
 3. Edit the config through the tray icon -> Edit Config File or through "C:\Users\<username>\Documents\CryptoWidget\config.json"
+4. Restart the widget bet exit it from the tray icon then start it again
 
 ## Build
 1. Clone the repository:
