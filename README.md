@@ -2,6 +2,8 @@
 
 A lightweight cryptocurrency widget that displays real-time prices and provides trading recommendations based on bid and ask analysis.
 
+<p align="center"><img align="center" src="screenshot.png"></p>
+
 ## Features
 - Real-time price updates for selected cryptocurrencies.
 - Trading suggestions derived from bid and ask data.
