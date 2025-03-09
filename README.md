@@ -9,7 +9,7 @@ A lightweight cryptocurrency widget that displays real-time prices and provides 
 - Trading suggestions derived from bid and ask data.
 - Simple and modern user-friendly interface.
 
-## Instlation
+## Installation
 1. Download prebuilt installer from [Releases](https://github.com/D4rkTT/CryptoWidget/releases)
 2. Install it
 3. Edit the config through the tray icon -> Edit Config File or through "C:\Users\<username>\Documents\CryptoWidget\config.json"
