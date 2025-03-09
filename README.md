@@ -1,4 +1,4 @@
-# CryptoWidget
+# <img width="32px" height="32px" src="cw.png" align="center"> CryptoWidget
 
 A lightweight cryptocurrency widget that displays real-time prices and provides trading recommendations based on bid and ask analysis.
 
