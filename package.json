@@ -1,0 +1,41 @@
+{
+  "name": "cryptowidget",
+  "version": "0.0.1",
+  "description": "Cryptocurrency widget displaying real-time prices and trading recommendations based on bid and ask analysis.",
+  "main": "main.js",
+  "scripts": {
+    "test": "electron .",
+    "debug": "electron . -d",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/D4rkTT/cryptowidget.git"
+  },
+  "build": {
+    "win": {
+      "target": "nsis"
+    }
+  },
+  "keywords": [
+    "crypto",
+    "bitcoin",
+    "btc",
+    "ethereum",
+    "eth",
+    "widget",
+    "windows",
+    "trading"
+  ],
+  "author": "D4rkTT",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/D4rkTT/cryptowidget/issues"
+  },
+  "homepage": "https://github.com/D4rkTT/cryptowidget#readme",
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^25.1.8"
+  }
+}

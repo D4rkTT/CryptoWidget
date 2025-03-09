@@ -1,0 +1,219 @@
+@import url(../fonts/inter.css);
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter';
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.app {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.widget-container {
+    width: 375px;
+    height: 140px;
+    border-radius: 10px;
+    background: #282A3A;
+    color: #fff;
+    margin: 10px 0px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: relative;
+}
+
+.mini-btn {
+    position: absolute;
+    right: 8px;
+    top: 0px;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    transition: 100ms;
+}
+
+.mini-btn:hover {
+    color: #f5e3cb;
+}
+
+.symbol-name {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5px;
+    height: 50px;
+    justify-content: center;
+    max-width: 120px;
+}
+
+.left {
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.base-name {
+    font-size: 36px;
+    line-height: 1;
+    font-weight: 200;
+    margin-left: -1px;
+    /* fix start space UI bug */
+    color: #fddfaf;
+}
+
+.quote-name {
+    font-size: 14px;
+    line-height: 1;
+    font-weight: 400;
+    color: #fff4e3;
+}
+
+.last-price {
+    font-size: 32px;
+    font-weight: 300;
+    transition: 100ms;
+}
+
+.green {
+    color: #4FFFB3;
+}
+
+.red {
+    color: #FF4F4F;
+}
+
+.change-percentage {
+    font-size: 14px;
+    font-weight: 300;
+    width: 100%;
+    display: block;
+}
+
+.symbol-price {
+    width: 120px;
+    line-height: 1;
+}
+
+.right {
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.trading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 5px;
+}
+
+.trading-headtext {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.time-periods {
+    display: flex;
+    flex-direction: row;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.time-periods li {
+    margin-left: 15px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 100ms;
+}
+
+.time-periods li:hover {
+    color: #f5e3cb;
+}
+
+.trading-charts {
+    display: flex;
+    flex-direction: row;
+}
+
+.trading-chart {
+    width: 40px;
+    height: 5px;
+    border-radius: 5px;
+    margin: 5px 2px 5px 2px;
+}
+
+.chart-red {
+    border: #FF4F4F 2px solid;
+    --fill-color: #FF4F4F;
+}
+
+.chart-green {
+    border: #4FFFB3 2px solid;
+    --fill-color: #4FFFB3;
+}
+
+.chart-fill {
+    background: var(--fill-color);
+}
+
+.chart-animation {
+    animation: chart-animation 1s infinite;
+}
+
+
+.trading-decision {
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+    margin: 10px 0;
+    font-weight: 600;
+}
+
+li.active {
+    color: #E7AE50;
+    font-weight: 600;
+}
+
+li.active:hover {
+    color: #E7AE50;
+}
+
+@keyframes chart-animation {
+    0% {
+        background-color: transparent;
+    }
+
+    50% {
+        background-color: var(--fill-color);
+    }
+}
+
+.right-price {
+    text-align: left;
+    width: 100%;
+}
+
+.right-last-price {
+    font-size: 22px;
+    margin-right: 5px;
+    font-weight: 300;
+}
+
+.right-change-percentage {
+    font-size: 14px;
+}

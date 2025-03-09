@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoWidget</title>
+    <link rel="stylesheet" href="./assets/css/main.css">
+</head>
+<body>
+    <div class="app"></div>
+    <script src="./assets/js/jquery-3.7.1.min.js"></script>
+    <script src="./assets/js/fitty.min.js"></script>
+    <script src="./assets/js/main.js"></script>
+    <script>
+        $( document ).ready(function() {
+            window.api.send("ready")
+        });
+        window.api.receive("symbols", (symbols) => {
+            for(let symbol of symbols){
+                appendWidget(symbol)
+            }
+        })
+    </script>
+</body>
+</html>
