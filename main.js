@@ -28,7 +28,6 @@ function createWindow (px, py) {
         }
     })
     mainWindow.setAlwaysOnTop(true, 'screen-saver');
-    //mainWindow.setIgnoreMouseEvents(!DEBUG, { forward: true })
     mainWindow.setBackgroundMaterial("none")
     mainWindow.loadFile(path.join(__dirname, "src", "index.html"))
 }
@@ -76,4 +75,8 @@ app.on('window-all-closed', () => {
 
 ipcMain.on('ready', (event) => {
     mainWindow.webContents.send('symbols', config.cryptoList)
+})
+
+ipcMain.on('focus', (event, data) => {
+    mainWindow.setIgnoreMouseEvents(!data, { forward: true })
 })

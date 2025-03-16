@@ -8,7 +8,10 @@ const configDir = path.join(os.homedir(), "Documents", appName);
 const configFile = path.join(configDir, "config.json");
 
 const defaultConfig = {
-    cryptoList: ["BTCUSDT"]
+    cryptoList: [{
+      symbol: "BTCUSDT",
+      average: 15
+    }]
 };
 
 function createConfigFile() {

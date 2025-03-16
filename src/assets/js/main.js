@@ -65,27 +65,34 @@ const updateDecision = (container, marketAnalysis) =>{
     decisionText.text(decisions[marketAnalysis])
     decisionChart.children().removeClass("chart-animation")
     decisionChart.children().removeClass("chart-fill")
+    decisionText.removeClass("green red");
     switch(marketAnalysis){
         case -2:
+            decisionText.addClass("red");
             decisionChart.children()[0].classList.add("chart-fill")
             decisionChart.children()[1].classList.add("chart-fill")
             break;
         case -1:
+            decisionText.addClass("red");
             decisionChart.children()[1].classList.add("chart-fill")
             break;
         case 0:
             break;
         case 1:
+            decisionText.addClass("green");
             decisionChart.children()[2].classList.add("chart-fill")
             break;
         case 2:
+            decisionText.addClass("green");
             decisionChart.children()[2].classList.add("chart-fill")
             decisionChart.children()[3].classList.add("chart-fill")
             break;
     }
 }
 
-const appendWidget = async (symbol) => {
+const appendWidget = async (data) => {
+    const symbol = data.symbol
+    const avg = data.average
     var symbolData = await getSymbolData(symbol)
     var template = `<div class="widget-container" data-period="15m" style="display: none;">
                         <div class="mini-btn">-</div>
@@ -124,6 +131,15 @@ const appendWidget = async (symbol) => {
                         </div>
                     </div>`
     var Jtemplate = $(template)
+
+    Jtemplate.mouseenter(function(){
+        window.api.send("focus", true)
+    })
+    
+    Jtemplate.mouseleave(function(){
+        window.api.send("focus", false)
+    })
+
     $('.app').append(Jtemplate)
     Jtemplate.show(100)
     var price = Jtemplate.find(".last-price")
@@ -194,12 +210,12 @@ const appendWidget = async (symbol) => {
                 askQty: parseFloat(data.askQty)
             };
 
-            if (marketData.length >= 15) {
+            if (marketData.length >= avg) {
                 marketData.shift();
             }
             marketData.push(processedData);
 
-            if (marketData.length === 15) {
+            if (marketData.length === avg) {
                 const decision = analyzeMarket(marketData);
                 updateDecision(Jtemplate, decision)
             }
@@ -208,3 +224,4 @@ const appendWidget = async (symbol) => {
         }
     }, 1000)
 }
+

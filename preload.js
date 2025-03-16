@@ -7,7 +7,7 @@ const {
 contextBridge.exposeInMainWorld(
     "api", {
         send: (channel, data) => {
-            let validChannels = ["ready"];
+            let validChannels = ["ready", "focus"];
             if (validChannels.includes(channel)) {
                 ipcRenderer.send(channel, data);
             }

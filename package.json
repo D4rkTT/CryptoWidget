@@ -1,6 +1,6 @@
 {
   "name": "cryptowidget",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Cryptocurrency widget displaying real-time prices and trading recommendations based on bid and ask analysis.",
   "main": "main.js",
   "scripts": {
