@@ -6,6 +6,7 @@ body {
     font-family: 'Inter';
     -webkit-user-select: none;
     user-select: none;
+    background: transparent;
 }
 
 .app {
@@ -22,10 +23,10 @@ body {
 }
 
 .widget-container {
-    width: 375px;
-    height: 140px;
+    width: 355px;
+    height: 130px;
     border-radius: 10px;
-    background: #282A3A;
+    background: #32343f85;
     color: #fff;
     margin: 10px 0px;
     display: flex;
@@ -51,14 +52,13 @@ body {
 .symbol-name {
     display: flex;
     flex-direction: column;
-    margin-top: 5px;
     height: 50px;
     justify-content: center;
     max-width: 120px;
 }
 
 .left {
-    padding: 10px 15px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -107,7 +107,7 @@ body {
 }
 
 .right {
-    padding: 10px 15px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -118,7 +118,6 @@ body {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin-top: 5px;
 }
 
 .trading-headtext {
@@ -179,9 +178,9 @@ body {
 .trading-decision {
     width: 100%;
     text-align: center;
-    font-size: 18px;
+    font-size: 16px;
     margin: 10px 0;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 li.active {

@@ -29,29 +29,26 @@ const updateClass = (element1, element2, current, previous) => {
     }
 }
 
-const analyzeMarket = (marketData) => {
-    let totalBidPrice = 0, totalBidQty = 0;
-    let totalAskPrice = 0, totalAskQty = 0;
-    
+function analyzeMarket(marketData) {
+    let totalBidQty = 0;
+    let totalAskQty = 0;
+
     for (const entry of marketData) {
-        totalBidPrice += entry.bidPrice;
         totalBidQty += entry.bidQty;
-        totalAskPrice += entry.askPrice;
         totalAskQty += entry.askQty;
     }
 
-    const avgBidPrice = totalBidPrice / marketData.length;
     const avgBidQty = totalBidQty / marketData.length;
-    const avgAskPrice = totalAskPrice / marketData.length;
     const avgAskQty = totalAskQty / marketData.length;
-    
-    if (avgBidPrice > avgAskPrice && avgBidQty > avgAskQty) {
+
+    // Adjusted trading logic based on supply and demand (quantities)
+    if (avgBidQty > avgAskQty * 1.5) {
         return 2; // Strong Buy
-    } else if (avgBidPrice > avgAskPrice) {
+    } else if (avgBidQty > avgAskQty * 1.1) {
         return 1; // Weak Buy
-    } else if (avgAskPrice > avgBidPrice && avgAskQty > avgBidQty) {
+    } else if (avgAskQty > avgBidQty * 1.5) {
         return -2; // Strong Sell
-    } else if (avgAskPrice > avgBidPrice) {
+    } else if (avgAskQty > avgBidQty * 1.1) {
         return -1; // Weak Sell
     } else {
         return 0; // No Action
@@ -94,7 +91,7 @@ const appendWidget = async (data) => {
     const symbol = data.symbol
     const avg = data.average
     var symbolData = await getSymbolData(symbol)
-    var template = `<div class="widget-container" data-period="15m" style="display: none;">
+    var template = `<div class="widget-container" data-period="1d" style="display: none;">
                         <div class="mini-btn">-</div>
                         <div class="left">
                             <div class="symbol-name">
@@ -118,10 +115,10 @@ const appendWidget = async (data) => {
                                 <span class="trading-decision">Calculating...</span>
                             </div>
                             <ul class="time-periods">
-                                <li class="active">15m</li>
+                                <li>15m</li>
                                 <li>1h</li>
                                 <li>6h</li>
-                                <li>1d</li>
+                                <li class="active">1d</li>
                                 <li>7d</li>
                             </ul>
                             <div class="right-price" style="display: none;">
@@ -172,7 +169,7 @@ const appendWidget = async (data) => {
             $(rightSymbolPrice).fadeIn(200)
             parent.classList.add("collapsed")
         }else{
-            $(parent).animate({height: "140px"}, 200)
+            $(parent).animate({height: "130px"}, 200)
             $(tradingText).fadeIn(200)
             $(tradingDecision).fadeIn(200)
             $(timePeriods).fadeIn(200)

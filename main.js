@@ -3,11 +3,12 @@ const path = require('node:path')
 const { createConfigFile, loadConfigFile, openConfigFile } = require("./configManager");
 const DEBUG = process.argv[2] && process.argv[2] === '-d'
 
+
 var mainWindow
 var config
 
 function createWindow (px, py) {
-    var WIDTH = 380
+    var WIDTH = 365
     var HEIGHT = 160 * config.cryptoList.length
     mainWindow = new BrowserWindow({
         width: WIDTH,
@@ -16,24 +17,26 @@ function createWindow (px, py) {
         roundedCorners: true,
         frame: DEBUG,
         transparent:true,
+        hasShadow: false,
         resizable:DEBUG,
         skipTaskbar: !DEBUG,
         x: px - WIDTH - 20,
-        y: py - HEIGHT - 56,
+        y: py - HEIGHT - 176,
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
             enableRemoteModule: false, 
-            preload: path.join(__dirname, "preload.js")
+            preload: path.join(__dirname, "preload.js"),
+            allowTransparency: true
         }
     })
     mainWindow.setAlwaysOnTop(true, 'screen-saver');
-    mainWindow.setBackgroundMaterial("none")
     mainWindow.loadFile(path.join(__dirname, "src", "index.html"))
+    //mainWindow.setBackgroundMaterial('acrylic');
 }
 
 const toggleDevTools = ()=>{
-    mainWindow.webContents.toggleDevTools()
+    mainWindow.webContents.openDevTools({mode: 'detach'})
 }
 
 const trayInit = () => {
@@ -42,7 +45,7 @@ const trayInit = () => {
       { label: 'Edit Config File', click: openConfigFile},
       { label: 'Exit', click: () => {app.exit(0)}},
     ]
-    if(DEBUG) temp.push({label: 'Toggle DevTools', click: toggleDevTools})
+    if(!DEBUG) temp.push({label: 'Toggle DevTools', click: toggleDevTools})
     const contextMenu = Menu.buildFromTemplate(temp)
     tray.setToolTip('CryptoWidget Menu')
     tray.setContextMenu(contextMenu)
