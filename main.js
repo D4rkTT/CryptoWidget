@@ -2,7 +2,6 @@ const { app, BrowserWindow, screen, globalShortcut, Menu, Tray, ipcMain } = requ
 const path = require('node:path')
 const { createConfigFile, loadConfigFile, openConfigFile } = require("./configManager");
 const DEBUG = process.argv[2] && process.argv[2] === '-d'
-const { RestClient } = require('okx-api')
 
 var mainWindow
 var config
@@ -84,19 +83,3 @@ ipcMain.on('focus', (event, data) => {
     if(DEBUG) data = true
     mainWindow.setIgnoreMouseEvents(!data, { forward: true })
 })
-
-const client = new RestClient();
-(async () => {
-    try {
-      const results = await client.getMarkPrice({"instId": "BTC-USDT"});
-  
-      console.log(
-        'result: ',
-        results
-      );
-  
-      return;
-    } catch (e) {
-      console.error('request failed: ', e);
-    }
-  })();
