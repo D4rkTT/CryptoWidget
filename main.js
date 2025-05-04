@@ -2,7 +2,7 @@ const { app, BrowserWindow, screen, globalShortcut, Menu, Tray, ipcMain } = requ
 const path = require('node:path')
 const { createConfigFile, loadConfigFile, openConfigFile } = require("./configManager");
 const DEBUG = process.argv[2] && process.argv[2] === '-d'
-
+const { RestClient } = require('okx-api')
 
 var mainWindow
 var config
@@ -45,7 +45,7 @@ const trayInit = () => {
       { label: 'Edit Config File', click: openConfigFile},
       { label: 'Exit', click: () => {app.exit(0)}},
     ]
-    if(!DEBUG) temp.push({label: 'Toggle DevTools', click: toggleDevTools})
+    if(DEBUG) temp.push({label: 'Toggle DevTools', click: toggleDevTools})
     const contextMenu = Menu.buildFromTemplate(temp)
     tray.setToolTip('CryptoWidget Menu')
     tray.setContextMenu(contextMenu)
@@ -81,5 +81,22 @@ ipcMain.on('ready', (event) => {
 })
 
 ipcMain.on('focus', (event, data) => {
+    if(DEBUG) data = true
     mainWindow.setIgnoreMouseEvents(!data, { forward: true })
 })
+
+const client = new RestClient();
+(async () => {
+    try {
+      const results = await client.getMarkPrice({"instId": "BTC-USDT"});
+  
+      console.log(
+        'result: ',
+        results
+      );
+  
+      return;
+    } catch (e) {
+      console.error('request failed: ', e);
+    }
+  })();

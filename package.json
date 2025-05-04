@@ -37,5 +37,8 @@
   "devDependencies": {
     "electron": "^35.0.0",
     "electron-builder": "^25.1.8"
+  },
+  "dependencies": {
+    "okx-api": "^2.0.3"
   }
 }
