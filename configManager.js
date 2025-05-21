@@ -8,10 +8,17 @@ const configDir = path.join(os.homedir(), "Documents", appName);
 const configFile = path.join(configDir, "config.json");
 
 const defaultConfig = {
-    cryptoList: [{
-      symbol: "BTCUSDT",
-      average: 15
-    }]
+  version: "1.0.0",
+  position:{
+    type: "top-right", // "custom", "top-right", "bottom-right", "bottom-left", "top-left"
+    x: 0,
+    y: 0
+  },
+  cryptoList: [{
+    coin: "BTC",
+    currency: "USDT",
+    average: 15
+  }]
 };
 
 function createConfigFile() {
@@ -35,11 +42,25 @@ function loadConfigFile() {
 
   try {
     const data = fs.readFileSync(configFile, "utf-8");
-    return JSON.parse(data);
+    var jsonData = JSON.parse(data);
+    
+    if (!jsonData.version || jsonData.version !== defaultConfig.version) {
+        fs.writeFileSync(configFile, JSON.stringify(defaultConfig, null, 2), "utf-8");
+        return defaultConfig;
+    }
+    return jsonData;
   } catch (error) {
     console.error("Error loading config file:", error);
     return defaultConfig;
   }
+}
+
+/**
+ * Updates the config.json file.
+ * @param {object} config - The configuration object to save.
+ */
+function updateConfigFile(config) {
+  fs.writeFileSync(configFile, JSON.stringify(config, null, 2), "utf-8");
 }
 
 /**
@@ -54,4 +75,4 @@ function openConfigFile() {
     });
 }
 
-module.exports = { createConfigFile, loadConfigFile, openConfigFile };
+module.exports = { createConfigFile, loadConfigFile, openConfigFile, updateConfigFile };

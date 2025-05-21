@@ -1,13 +1,14 @@
-const getSymbolData = async (symbol) => {
-    var req = await fetch(`https://api.binance.com/api/v3/exchangeInfo?symbol=${symbol}`)
+const getCoinData = async (name) => {
+    var req = await fetch(`https://api.coingecko.com/api/v3/search?query=${name}`)  
     var res = await req.json()
-    return {baseAsset: res.symbols[0].baseAsset, quoteAsset: res.symbols[0].quoteAsset}
+    return {symbol: res.coins[0].symbol, name: res.coins[0].name}
 }
 
 const getSymbolPrice = async (symbol, windowSize) => {
     var req = await fetch(`https://api.binance.com/api/v3/ticker?symbol=${symbol}&windowSize=${windowSize}`)
     var res = await req.json()
-    return {lastPrice: res.lastPrice, priceChangePercent: parseFloat(res.priceChangePercent)}
+    console.log(res)
+    return {lastPrice: res.lastPrice, priceChangePercent: parseFloat(res.priceChangePercent), priceChange: res.priceChange}
 }
 
 const getSymbolBookTicker = async (symbol) => {
@@ -16,16 +17,13 @@ const getSymbolBookTicker = async (symbol) => {
     return res
 }
 
-const updateClass = (element1, element2, current, previous) => {
+const updateClass = (element1, current, previous) => {
     element1.removeClass("green red");
-    element2.removeClass("green red");
 
     if (current > previous) {
         element1.addClass("green");
-        element2.addClass("green");
     } else if (current < previous) {
         element1.addClass("red");
-        element2.addClass("red");
     }
 }
 
@@ -56,31 +54,23 @@ function analyzeMarket(marketData) {
 }
 
 const updateDecision = (container, marketAnalysis) =>{
-    var decisionText = container.find(".trading-decision")
     var decisionChart = container.find(".trading-charts")
-    var decisions = {"-2": "Strong Sell", "-1": "Weak Sell", "0": "No Action", "1": "Weak Buy", "2": "Strong Buy"}
-    decisionText.text(decisions[marketAnalysis])
     decisionChart.children().removeClass("chart-animation")
     decisionChart.children().removeClass("chart-fill")
-    decisionText.removeClass("green red");
     switch(marketAnalysis){
         case -2:
-            decisionText.addClass("red");
             decisionChart.children()[0].classList.add("chart-fill")
             decisionChart.children()[1].classList.add("chart-fill")
             break;
         case -1:
-            decisionText.addClass("red");
             decisionChart.children()[1].classList.add("chart-fill")
             break;
         case 0:
             break;
         case 1:
-            decisionText.addClass("green");
             decisionChart.children()[2].classList.add("chart-fill")
             break;
         case 2:
-            decisionText.addClass("green");
             decisionChart.children()[2].classList.add("chart-fill")
             decisionChart.children()[3].classList.add("chart-fill")
             break;
@@ -88,15 +78,16 @@ const updateDecision = (container, marketAnalysis) =>{
 }
 
 const appendWidget = async (data) => {
-    const symbol = data.symbol
+    const coin = data.coin
+    const currency = data.currency
+    const symbol = `${coin}${currency}`
     const avg = data.average
-    var symbolData = await getSymbolData(symbol)
+    var coinData = await getCoinData(coin)
     var template = `<div class="widget-container" data-period="1d" style="display: none;">
-                        <div class="mini-btn">-</div>
                         <div class="left">
                             <div class="symbol-name">
-                                <span class="base-name">${symbolData.baseAsset}</span>
-                                <span class="quote-name">${symbolData.quoteAsset}</span>
+                                <span class="base-name">${coinData.name} (${coinData.symbol})</span>
+                                <span class="quote-name">${currency}</span>
                             </div>
                             <div class="symbol-price">
                                 <span class="last-price">0$</span>
@@ -112,19 +103,14 @@ const appendWidget = async (data) => {
                                     <div class="trading-chart chart-green chart-animation" data-index="2"></div>
                                     <div class="trading-chart chart-green chart-animation" data-index="3"></div>
                                 </div>
-                                <span class="trading-decision">Calculating...</span>
                             </div>
                             <ul class="time-periods">
-                                <li>15m</li>
-                                <li>1h</li>
-                                <li>6h</li>
-                                <li class="active">1d</li>
-                                <li>7d</li>
+                                <li>15M</li>
+                                <li>1H</li>
+                                <li>6H</li>
+                                <li class="active">1D</li>
+                                <li>7D</li>
                             </ul>
-                            <div class="right-price" style="display: none;">
-                                <span class="right-last-price">0$</span>
-                                <span class="right-change-percentage">0%</span>
-                            </div>
                         </div>
                     </div>`
     var Jtemplate = $(template)
@@ -140,57 +126,27 @@ const appendWidget = async (data) => {
     $('.app').append(Jtemplate)
     Jtemplate.show(100)
     var price = Jtemplate.find(".last-price")
-    var rprice = Jtemplate.find(".right-last-price")
     fitty(".last-price", {minSize:1, maxSize:32})
     var percentage = Jtemplate.find(".change-percentage")
-    var rpercentage = Jtemplate.find(".right-change-percentage")
-    var tradingContainer = Jtemplate.find(".trading-container")
     Jtemplate.find('.time-periods li').on('click', function(){
         Jtemplate.attr("data-period", this.innerText)
         $(this).toggleClass("active");
         $(this).siblings().removeClass("active");
     })
 
-    Jtemplate.find('.mini-btn').on('click', function(){
-        var parent = this.parentElement
-        var collapsed = parent.classList.contains("collapsed")
-        var tradingText = parent.getElementsByClassName('trading-headtext')
-        var tradingDecision = parent.getElementsByClassName('trading-decision')
-        var timePeriods = parent.getElementsByClassName('time-periods')
-        var symbolPrice = parent.getElementsByClassName('symbol-price')
-        var rightSymbolPrice = parent.getElementsByClassName('right-price')
-        window.mini = this
-        if(!collapsed){
-            $(parent).animate({height: "75px"}, 200)
-            $(tradingText).fadeOut(200)
-            $(tradingDecision).fadeOut(200)
-            $(timePeriods).fadeOut(200)
-            $(symbolPrice).fadeOut(200)
-            $(rightSymbolPrice).fadeIn(200)
-            parent.classList.add("collapsed")
-        }else{
-            $(parent).animate({height: "130px"}, 200)
-            $(tradingText).fadeIn(200)
-            $(tradingDecision).fadeIn(200)
-            $(timePeriods).fadeIn(200)
-            $(symbolPrice).fadeIn(200)
-            $(rightSymbolPrice).fadeOut(200)
-            parent.classList.remove("collapsed")
-        }
-    })
     var lastPrice = 0
     setInterval(async ()=>{
         var priceData = await getSymbolPrice(symbol, Jtemplate.attr("data-period"))
-        let formattedPrice = "$" + parseFloat(priceData.lastPrice).toFixed(2);
-        let changePercent = priceData.priceChangePercent + "%";
+        let formattedPrice = priceData.lastPrice > 1.0 ? "$" + parseFloat(priceData.lastPrice).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : "$" + parseFloat(priceData.lastPrice);
+        let changePercent = parseFloat(priceData.priceChangePercent).toFixed(2) + "%";
+        let priceChange = parseInt(priceData.priceChange).toLocaleString('en-US')
+        let changeValue = parseFloat(priceData.priceChange) > 1 ? "+$" + priceChange : "-$" + (parseFloat(priceData.priceChange) * -1) ;
 
         price.text(formattedPrice);
-        rprice.text(formattedPrice);
-        percentage.text(changePercent);
-        rpercentage.text(changePercent);
+        percentage.text(`${changeValue} (${changePercent})`);
 
-        updateClass(price, rprice, priceData.lastPrice, lastPrice);
-        updateClass(percentage, rpercentage, priceData.priceChangePercent, 0);
+        updateClass(price, priceData.lastPrice, lastPrice);
+        updateClass(percentage, priceData.priceChangePercent, 0);
 
         lastPrice = priceData.lastPrice
     }, 1000)

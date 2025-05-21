@@ -1,26 +1,51 @@
 const { app, BrowserWindow, screen, globalShortcut, Menu, Tray, ipcMain } = require('electron/main')
 const path = require('node:path')
-const { createConfigFile, loadConfigFile, openConfigFile } = require("./configManager");
+const { createConfigFile, loadConfigFile, openConfigFile, updateConfigFile } = require("./configManager");
 const DEBUG = process.argv[2] && process.argv[2] === '-d'
 
 var mainWindow
 var config
 
 function createWindow (px, py) {
-    var WIDTH = 365
-    var HEIGHT = 160 * config.cryptoList.length
+    var WIDTH = 380
+    var HEIGHT = 120 * config.cryptoList.length
+    var x = 0
+    var y = 0
+    switch(config.position.type){
+        case "top-right":
+            x = px - WIDTH
+            y = 0
+            break
+        case "bottom-right":
+            x = px - WIDTH 
+            y = py - HEIGHT - 50 
+            break
+        case "bottom-left":
+            x = 0
+            y = py - HEIGHT - 50
+            break
+        case "top-left":
+            x = 0
+            y = 0
+            break
+        default: // custom
+            x = config.position.x
+            y = config.position.y
+            break
+    }
+
     mainWindow = new BrowserWindow({
         width: WIDTH,
         height: HEIGHT,
         alwaysOnTop: true,
         roundedCorners: true,
-        frame: DEBUG,
+        frame: false,
         transparent:true,
         hasShadow: false,
         resizable:DEBUG,
         skipTaskbar: !DEBUG,
-        x: px - WIDTH - 20,
-        y: py - HEIGHT - 176,
+        x: x,
+        y: y,
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
@@ -29,9 +54,17 @@ function createWindow (px, py) {
             allowTransparency: true
         }
     })
+
     mainWindow.setAlwaysOnTop(true, 'screen-saver');
     mainWindow.loadFile(path.join(__dirname, "src", "index.html"))
-    //mainWindow.setBackgroundMaterial('acrylic');
+
+    mainWindow.on('moved', () => {
+        config.position.x = mainWindow.getBounds().x;
+        config.position.y = mainWindow.getBounds().y;
+        config.position.type = "custom";
+        updateConfigFile(config);
+    });
+    
 }
 
 const toggleDevTools = ()=>{
@@ -42,7 +75,11 @@ const trayInit = () => {
     let tray = new Tray(path.join(__dirname, "cw.png"))
     let temp = [
       { label: 'Edit Config File', click: openConfigFile},
-      { label: 'Exit', click: () => {app.exit(0)}},
+      { label: 'Toggle Move', type: 'checkbox', click: (event) => {
+        mainWindow.webContents.send('enableMove', event.checked)
+        mainWindow.setIgnoreMouseEvents(!event.checked, { forward: true }) // Fix a bug where the window is not focused when the checkbox is checked due to "-webkit-app-region: drag"
+      }},
+      { label: 'Exit', click: () => {app.exit(0)}}
     ]
     if(DEBUG) temp.push({label: 'Toggle DevTools', click: toggleDevTools})
     const contextMenu = Menu.buildFromTemplate(temp)
@@ -67,6 +104,7 @@ app.whenReady().then(() => {
             createWindow(mainDisplay.bounds.width, mainDisplay.bounds.height)
         }
     })
+
 })
 
 app.on('window-all-closed', () => {

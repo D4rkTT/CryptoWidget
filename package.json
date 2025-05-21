@@ -1,6 +1,6 @@
 {
   "name": "cryptowidget",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "Cryptocurrency widget displaying real-time prices and trading recommendations based on bid and ask analysis.",
   "main": "main.js",
   "scripts": {
@@ -14,6 +14,8 @@
     "url": "git+https://github.com/D4rkTT/cryptowidget.git"
   },
   "build": {
+    "appId": "com.darkt.cryptowidget",
+    "productName": "CryptoWidget",
     "win": {
       "target": "nsis"
     }
@@ -37,8 +39,5 @@
   "devDependencies": {
     "electron": "^35.0.0",
     "electron-builder": "^25.1.8"
-  },
-  "dependencies": {
-    "okx-api": "^2.0.3"
   }
 }

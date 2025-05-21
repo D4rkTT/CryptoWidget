@@ -15,9 +15,24 @@
         $( document ).ready(function() {
             window.api.send("ready")
         });
+        
         window.api.receive("symbols", (symbols) => {
             for(let symbol of symbols){
                 appendWidget(symbol)
+            }
+        })
+
+        window.api.receive("enableMove", (enableMove) => {
+            if(enableMove){
+                $('.app').css({
+                    'cursor': 'move',
+                    '-webkit-app-region': 'drag'
+                });
+            }else{
+                $('.app').css({
+                    'cursor': 'default',
+                    '-webkit-app-region': 'no-drag'
+                });
             }
         })
     </script>
