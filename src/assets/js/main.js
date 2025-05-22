@@ -1,17 +1,17 @@
 const getCoinData = async (name) => {
-    var req = await fetch(`https://api.coingecko.com/api/v3/search?query=${name}`)  
+    var req = await fetch(`https://api.coingecko.com/api/v3/search?query=${name.replace(/[^a-zA-Z]/g, '')}`)  
     var res = await req.json()
     return {symbol: res.coins[0].symbol, name: res.coins[0].name}
 }
 
 const getSymbolPrice = async (symbol, windowSize) => {
-    var req = await fetch(`https://api.binance.com/api/v3/ticker?symbol=${symbol}&windowSize=${windowSize.toLowerCase()}`)
+    var req = await fetch(`https://api.binance.com/api/v3/ticker?symbol=${symbol.replace(/[^a-zA-Z]/g, '')}&windowSize=${windowSize.toLowerCase()}`)
     var res = await req.json()
     return {lastPrice: res.lastPrice, priceChangePercent: parseFloat(res.priceChangePercent), priceChange: res.priceChange}
 }
 
 const getSymbolBookTicker = async (symbol) => {
-    var req = await fetch(`https://api.binance.com/api/v3/ticker/bookTicker?symbol=${symbol}`)
+    var req = await fetch(`https://api.binance.com/api/v3/ticker/bookTicker?symbol=${symbol.replace(/[^a-zA-Z]/g, '')}`)
     var res = await req.json()
     return res
 }
@@ -48,7 +48,7 @@ function analyzeMarket(marketData) {
     } else if (avgAskQty > avgBidQty * 1.1) {
         return -1; // Weak Sell
     } else {
-        return 0; // No Action
+        return 0; // Neutral
     }
 }
 
@@ -133,13 +133,22 @@ const appendWidget = async (data) => {
         $(this).siblings().removeClass("active");
     })
 
+
     var lastPrice = 0
     setInterval(async ()=>{
         var priceData = await getSymbolPrice(symbol, Jtemplate.attr("data-period"))
-        let formattedPrice = priceData.lastPrice > 1.0 ? "$" + parseFloat(priceData.lastPrice).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : "$" + parseFloat(priceData.lastPrice);
-        let changePercent = parseFloat(priceData.priceChangePercent).toFixed(2) + "%";
-        let priceChange = parseInt(priceData.priceChange).toLocaleString('en-US')
-        let changeValue = parseFloat(priceData.priceChange) > 1 ? "+$" + priceChange : "-$" + (parseFloat(priceData.priceChange) * -1) ;
+        const lastPrice = parseFloat(priceData.lastPrice);
+        const priceChange = parseFloat(priceData.priceChange).toFixed(8);
+        const priceChangePercent = parseFloat(priceData.priceChangePercent);
+        
+        const formattedPrice = `$${lastPrice > 1.0 
+            ? lastPrice.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})
+            : lastPrice}`;
+            
+        const changePercent = `${priceChangePercent.toFixed(2)}%`;
+        const formattedPriceChange = Math.abs(priceChange).toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+        
+        const changeValue = `${priceChange >= 0 ? '+' : '-'}$${lastPrice >= 1.0 ? formattedPriceChange : Math.abs(priceChange)}`;
 
         price.text(formattedPrice);
         percentage.text(`${changeValue} (${changePercent})`);
@@ -148,7 +157,7 @@ const appendWidget = async (data) => {
         updateClass(percentage, priceData.priceChangePercent, 0);
 
         lastPrice = priceData.lastPrice
-    }, 1000)
+    }, 800)
 
     var marketData = []
     setInterval(async ()=>{
