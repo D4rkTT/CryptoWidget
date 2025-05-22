@@ -5,9 +5,8 @@ const getCoinData = async (name) => {
 }
 
 const getSymbolPrice = async (symbol, windowSize) => {
-    var req = await fetch(`https://api.binance.com/api/v3/ticker?symbol=${symbol}&windowSize=${windowSize}`)
+    var req = await fetch(`https://api.binance.com/api/v3/ticker?symbol=${symbol}&windowSize=${windowSize.toLowerCase()}`)
     var res = await req.json()
-    console.log(res)
     return {lastPrice: res.lastPrice, priceChangePercent: parseFloat(res.priceChangePercent), priceChange: res.priceChange}
 }
 
