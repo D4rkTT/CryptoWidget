@@ -76,6 +76,14 @@ const updateDecision = (container, marketAnalysis) =>{
     }
 }
 
+function normalizeNumber(n) {
+    const str = n.toString();
+    if (str.includes('e')) {
+      return n.toFixed(20).replace(/\.?0+$/, '');
+    }
+    return str;
+}
+
 const appendWidget = async (data) => {
     const coin = data.coin
     const currency = data.currency
@@ -125,8 +133,10 @@ const appendWidget = async (data) => {
     $('.app').append(Jtemplate)
     Jtemplate.show(100)
     var price = Jtemplate.find(".last-price")
-    fitty(".last-price", {minSize:1, maxSize:32})
     var percentage = Jtemplate.find(".change-percentage")
+    fitty(".last-price", {minSize:1, maxSize:28})
+    fitty(".change-percentage", {minSize:1, maxSize:13})
+    fitty(".base-name", {minSize:13, maxSize:16})
     Jtemplate.find('.time-periods li').on('click', function(){
         Jtemplate.attr("data-period", this.innerText)
         $(this).toggleClass("active");
@@ -148,7 +158,7 @@ const appendWidget = async (data) => {
         const changePercent = `${priceChangePercent.toFixed(2)}%`;
         const formattedPriceChange = Math.abs(priceChange).toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 1});
         
-        const changeValue = `${priceChange >= 0 ? '+' : '-'}$${lastPrice >= 1.0 ? formattedPriceChange : Math.abs(priceChange)}`;
+        const changeValue = `${priceChange >= 0 ? '+' : '-'}$${lastPrice >= 1.0 ? formattedPriceChange : normalizeNumber(Math.abs(priceChange))}`;
 
         price.text(formattedPrice);
         percentage.text(`${changeValue} (${changePercent})`);

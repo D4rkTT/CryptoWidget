@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoWidget Settings</title>
+    <link rel="stylesheet" href="assets/css/settings.css">
+</head>
+<body>
+    <div class="circle-background"></div>
+    <div class="top-bar">
+        <span class="close-x" onclick="window.close()"><i style="font-size: 1em;" class="bx bx-x n-margin"></i></span>
+        <p>CryptoWidget Settings</p>
+    </div>
+    <div class="container">
+        <form id="settingsForm">
+            <div class="widget-location">
+                <div class="section-title">Widget Location:</div>
+                <div class="location-row">
+                    <i class="bx bx-move"></i>
+                    <label for="position">Position:</label>
+                    <select id="position" name="position">
+                        <option value="top-left">Top-Left</option>
+                        <option value="top-right">Top-Right</option>
+                        <option value="bottom-left">Bottom-Left</option>
+                        <option value="bottom-right">Bottom-Right</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                    <div class="position-inputs" id="position-inputs">
+                        <i class="bx bx-move-horizontal"></i>
+                        <input type="number" id="positionX" class="pill-input" name="positionX" placeholder="X" min="0">
+                        <i class="bx bx-move-vertical"></i>
+                        <input type="number" id="positionY" class="pill-input" name="positionY" placeholder="Y" min="0">
+                    </div>
+                </div>
+            </div>
+            <div class="widget-coins">
+                <div class="section-title">Widget Coins:</div>
+                <div class="coin-list" id="coinList"></div>
+                <div class="btn-row">
+                    <button type="button" class="add-btn" id="addCoin">Add Coin</button>
+                    <button type="submit" class="main-btn">Apply</button>
+                    <button type="button" class="reset-btn" id="resetSettings">Reset</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script src="assets/js/settings.js"></script>
+</body>
+</html>

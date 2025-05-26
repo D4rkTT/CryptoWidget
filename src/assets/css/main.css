@@ -29,7 +29,7 @@ body {
     border-radius: 10px;
     background: #212121;
     color: #fff;
-    margin: 10px 0px;
+    margin: 2px 0px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -99,7 +99,6 @@ body {
     font-size: 13px;
     font-weight: 500;
     width: 100%;
-    display: block;
 }
 
 .symbol-price {

@@ -16,9 +16,9 @@
             window.api.send("ready")
         });
         
-        window.api.receive("symbols", (symbols) => {
+        window.api.receive("symbols", async (symbols) => {
             for(let symbol of symbols){
-                appendWidget(symbol)
+                await appendWidget(symbol)
             }
         })
 

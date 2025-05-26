@@ -4,17 +4,18 @@ const { createConfigFile, loadConfigFile, openConfigFile, updateConfigFile } = r
 const DEBUG = process.argv[2] && process.argv[2] === '-d'
 
 var mainWindow
+var settingsWindow
 var config
 
 function createWindow (px, py) {
     var WIDTH = 380
-    var HEIGHT = 120 * config.cryptoList.length
+    var HEIGHT = 104 * config.cryptoList.length
     var x = 0
     var y = 0
     switch(config.position.type){
         case "top-right":
             x = px - WIDTH
-            y = 0
+            y = 10
             break
         case "bottom-right":
             x = px - WIDTH 
@@ -26,7 +27,7 @@ function createWindow (px, py) {
             break
         case "top-left":
             x = 0
-            y = 0
+            y = 10
             break
         default: // custom
             x = config.position.x
@@ -63,6 +64,9 @@ function createWindow (px, py) {
         config.position.y = mainWindow.getBounds().y;
         config.position.type = "custom";
         updateConfigFile(config);
+        if (settingsWindow) {
+            settingsWindow.webContents.send('current-settings', config);
+        }
     });
     
 }
@@ -71,9 +75,49 @@ const toggleDevTools = ()=>{
     mainWindow.webContents.openDevTools({mode: 'detach'})
 }
 
+const createSettingsWindow = () => {
+    if (settingsWindow) {
+        settingsWindow.focus()
+        return
+    }
+
+    settingsWindow = new BrowserWindow({
+        width: 800,
+        height: 510,
+        resizable: false,
+        title: 'CryptoWidget Settings',
+        roundedCorners: true,
+        frame: false,
+        maximizable: false,
+        webPreferences: {
+            nodeIntegration: false,
+            contextIsolation: true,
+            preload: path.join(__dirname, "preload.js")
+        }
+    })
+
+    settingsWindow.loadFile(path.join(__dirname, "src", "settings.html"))
+    
+    settingsWindow.on('closed', () => {
+        settingsWindow = null
+    })
+}
+
+const recreateMainWindow = () => {
+    if (mainWindow) {
+        mainWindow.close()
+    }
+    const displays = screen.getAllDisplays()
+    const mainDisplay = displays.find((display) => {
+        return display.bounds.x == 0 && display.bounds.y == 0
+    })
+    createWindow(mainDisplay.bounds.width, mainDisplay.bounds.height)
+}
+
 const trayInit = () => {
     let tray = new Tray(path.join(__dirname, "cw.png"))
     let temp = [
+      { label: 'Settings', click: createSettingsWindow },
       { label: 'Edit Config File', click: openConfigFile},
       { label: 'Toggle Move', type: 'checkbox', click: (event) => {
         mainWindow.webContents.send('enableMove', event.checked)
@@ -85,7 +129,7 @@ const trayInit = () => {
     const contextMenu = Menu.buildFromTemplate(temp)
     tray.setToolTip('CryptoWidget Menu')
     tray.setContextMenu(contextMenu)
-  }
+}
 
 app.whenReady().then(() => {
     createConfigFile()
@@ -120,4 +164,14 @@ ipcMain.on('ready', (event) => {
 ipcMain.on('focus', (event, data) => {
     if(DEBUG) data = true
     mainWindow.setIgnoreMouseEvents(!data, { forward: true })
+})
+
+ipcMain.on('get-settings', (event) => {
+    event.reply('current-settings', config)
+})
+
+ipcMain.on('apply-settings', (event, newConfig) => {
+    config = newConfig
+    updateConfigFile(config)
+    recreateMainWindow()
 })
