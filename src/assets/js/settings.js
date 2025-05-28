@@ -12,6 +12,10 @@
      const row = document.createElement('div');
      row.className = 'coin-row';
      row.innerHTML = `
+     <div class="coin-row-drag-handle" onmousedown="rowMouseDown(event, this)">
+        <i class="bx bx-dots-vertical-rounded n-margin" draggable="false" style="margin-left: -4px;"></i>
+        <i class="bx bx-dots-vertical-rounded n-margin" draggable="false" style="margin-left: -14px;margin-right: -4px;"></i>
+     </div>
      <div class="coin-row-inner">
          <i class="bx bx-bitcoin"></i><label>Coin:</label>
          <input type="text" class="pill-input coin-name" value="${coin}" placeholder="BTC">
@@ -85,3 +89,71 @@
          ipc.send('get-settings');
      });
  }
+
+ // Darg and Drop
+
+let isDragging = false;
+let currentItem = null;
+let containerOffsetY = 0;
+let initY = 0;
+
+const container = document.getElementById('coinList');
+
+function rowMouseDown(e, element) {
+    isDragging = true;
+    currentItem = element.parentElement;
+    containerOffsetY = currentItem.offsetTop;
+    currentItem.classList.add("dragging");
+    currentItem.style.top = containerOffsetY + "px";
+    initY = e.clientY;
+    rowMouseMove(e);
+}
+
+function rowMouseMove(e) {
+    if (isDragging && currentItem) {
+        currentItem.classList.remove("insert-animation");
+        let newTop = containerOffsetY - (initY - e.clientY);
+        // TODO: Add a limit to the top and bottom of the container
+        currentItem.style.top = newTop + "px";
+
+        let itemSibilings = [
+        ...document.querySelectorAll(".coin-row:not(.dragging)"),
+        ];
+        let nextItem = itemSibilings.find((sibiling) => {
+            return (
+                e.clientY <=
+                sibiling.offsetTop + sibiling.offsetHeight
+            );
+        });
+
+        itemSibilings.forEach((sibiling) => {
+            sibiling.style.marginTop = "0px";
+        });
+
+        if (nextItem) {
+        nextItem.style.marginTop = currentItem.offsetHeight + 12 + "px";
+        }
+        container.insertBefore(currentItem, nextItem);
+    }
+    
+}
+
+function rowMouseUp() {
+    if (currentItem) {
+        currentItem.classList.remove("dragging");
+        currentItem.classList.remove("insert-animation");
+        currentItem.style.top = "auto";
+        currentItem = null;
+        isDragging = false;
+        let itemSibilings = [
+            ...document.querySelectorAll(".coin-row:not(.dragging)"),
+        ];
+
+        itemSibilings.forEach((sibiling) => {
+            sibiling.style.marginTop = "0";
+        });
+    }
+}
+
+document.addEventListener("mousemove", rowMouseMove);
+document.addEventListener("mouseup", rowMouseUp);

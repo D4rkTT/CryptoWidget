@@ -108,6 +108,7 @@ select {
     cursor: pointer;
     transition: background 0.2s;
     line-height: 0;
+    margin-right: 5px;
 }
 .remove-coin-btn:hover {
     color: rgb(255, 85, 85);
@@ -278,4 +279,22 @@ i.n-margin {
     color: #fff;
     text-align: left;
     padding: 0;
+}
+
+.coin-row-drag-handle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background: #f1f1f10f;
+    border-radius: 7px;
+    padding: 0px 5px;
+    margin-right: 5px;
+}
+
+.coin-row.dragging {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.7;
 }

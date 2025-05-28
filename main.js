@@ -82,7 +82,7 @@ const createSettingsWindow = () => {
     }
 
     settingsWindow = new BrowserWindow({
-        width: 800,
+        width: 820,
         height: 510,
         resizable: false,
         title: 'CryptoWidget Settings',
@@ -101,6 +101,7 @@ const createSettingsWindow = () => {
     settingsWindow.on('closed', () => {
         settingsWindow = null
     })
+    if(DEBUG) settingsWindow.webContents.openDevTools({mode: 'detach'})
 }
 
 const recreateMainWindow = () => {
