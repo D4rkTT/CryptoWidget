@@ -9,11 +9,17 @@ A lightweight cryptocurrency widget that displays real-time prices and provides 
 - Trading suggestions derived from bid and ask data.
 - Simple and modern user-friendly interface.
 
+## Changelog:
+- **Design**: Updated to a more compact and streamlined interface.
+- **Settings Window**: Added a new settings interface that lets you customize the application’s position and manage coins (add, remove, update, and reorder).
+- **Mobility**: You can now set the widget position via the config or settings (top-right, top-left, bottom-right, bottom-left) or enable "Toggle Move" from the tray icon to freely reposition the widget on screen. Once disabled, the new position is saved automatically.
+- **Customization**: The configuration now allows you to specify the target cryptocurrency and the conversion currency independently.
+- **Improvements**: Includes numerous bug fixes and overall code optimization.
+
 ## Installation
 1. Download prebuilt installer from [Releases](https://github.com/D4rkTT/CryptoWidget/releases)
 2. Install it
-3. Edit the config through the tray icon -> Edit Config File or through "C:\Users\<username>\Documents\CryptoWidget\config.json"
-4. Restart the widget by exit it from the tray icon then start it again
+3. Customize the widget through the settings menu (open it from tray icon) or through the config file on "C:\Users\<username>\Documents\CryptoWidget\config.json"
 
 ## Build
 1. Clone the repository:
@@ -32,10 +38,8 @@ A lightweight cryptocurrency widget that displays real-time prices and provides 
    ```sh
    npm dist
    ```
-5. Run the widget:
-   ```sh
-   npm test
-   ```
+5. Install the widget:
+   from `dist` folder
 
 ## Usage
 - Open the application to view real-time cryptocurrency prices.
