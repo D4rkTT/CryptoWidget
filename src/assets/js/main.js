@@ -5,7 +5,7 @@ const getCoinData = async (name) => {
 }
 
 const getSymbolPrice = async (symbol, windowSize) => {
-    var req = await fetch(`https://api.binance.com/api/v3/ticker?symbol=${symbol.replace(/[^a-zA-Z]/g, '')}&windowSize=${windowSize.toLowerCase()}`)
+    var req = await fetch(`https://api.binance.com/api/v3/ticker?symbol=${symbol.replace(/[^a-zA-Z]/g, '')}&windowSize=1d`)
     var res = await req.json()
     return {lastPrice: res.lastPrice, priceChangePercent: parseFloat(res.priceChangePercent), priceChange: res.priceChange}
 }
@@ -53,7 +53,7 @@ function analyzeMarket(marketData) {
 }
 
 const updateDecision = (container, marketAnalysis) =>{
-    var decisionChart = container.find(".trading-charts")
+    var decisionChart = container.find(".trading-book")
     decisionChart.children().removeClass("chart-animation")
     decisionChart.children().removeClass("chart-fill")
     switch(marketAnalysis){
@@ -67,11 +67,11 @@ const updateDecision = (container, marketAnalysis) =>{
         case 0:
             break;
         case 1:
-            decisionChart.children()[2].classList.add("chart-fill")
+            decisionChart.children()[3].classList.add("chart-fill")
             break;
         case 2:
-            decisionChart.children()[2].classList.add("chart-fill")
             decisionChart.children()[3].classList.add("chart-fill")
+            decisionChart.children()[4].classList.add("chart-fill")
             break;
     }
 }
@@ -84,16 +84,28 @@ function normalizeNumber(n) {
     return str;
 }
 
+const getHeight = () => {
+    var totalHeight = 0
+    $('.app').children().each(function(){
+        if($(this).hasClass("expanded")){
+            totalHeight += 240
+        }else{
+            totalHeight += 70
+        }
+    })
+    return totalHeight + 4
+}
+
 const appendWidget = async (data) => {
     const coin = data.coin
     const currency = data.currency
     const symbol = `${coin}${currency}`
     const avg = data.average
     var coinData = await getCoinData(coin)
-    var template = `<div class="widget-container" data-period="1d" style="display: none;">
-                        <div class="left">
+    var template = `<div class="widget-container" data-period="15m" style="display: none;">
+                        <div class="top">
                             <div class="symbol-name">
-                                <span class="base-name">${coinData.name} (${coinData.symbol})</span>
+                                <span class="base-name">${coinData.name} (${coinData.symbol}) <i class="bx bx-caret-down expand-icon"></i></span>
                                 <span class="quote-name">${currency}</span>
                             </div>
                             <div class="symbol-price">
@@ -101,21 +113,26 @@ const appendWidget = async (data) => {
                                 <span class="change-percentage">0%</span>
                             </div>
                         </div>
-                        <div class="right">
+                        <div class="bottom">
                             <div class="trading-container">
-                                <span class="trading-headtext">Trading Decision</span>
                                 <div class="trading-charts">
+                                    <canvas class="candlestickChart"></canvas>
+                                </div>
+                                <div class="trading-book">
                                     <div class="trading-chart chart-red chart-animation" data-index="0"></div>
                                     <div class="trading-chart chart-red chart-animation" data-index="1"></div>
+                                    <div class="trading-dot"></div>
                                     <div class="trading-chart chart-green chart-animation" data-index="2"></div>
                                     <div class="trading-chart chart-green chart-animation" data-index="3"></div>
                                 </div>
                             </div>
                             <ul class="time-periods">
-                                <li>15M</li>
+                                <li>1S</li>
+                                <li>1M</li>
+                                <li class="active">15M</li>
                                 <li>1H</li>
                                 <li>6H</li>
-                                <li class="active">1D</li>
+                                <li>1D</li>
                                 <li>7D</li>
                             </ul>
                         </div>
@@ -134,17 +151,37 @@ const appendWidget = async (data) => {
     Jtemplate.show(100)
     var price = Jtemplate.find(".last-price")
     var percentage = Jtemplate.find(".change-percentage")
-    fitty(".last-price", {minSize:1, maxSize:28})
+    fitty(".last-price", {minSize:1, maxSize:21})
     fitty(".change-percentage", {minSize:1, maxSize:13})
-    fitty(".base-name", {minSize:13, maxSize:16})
+    fitty(".base-name", {minSize:13, maxSize:18})
     Jtemplate.find('.time-periods li').on('click', function(){
         Jtemplate.attr("data-period", this.innerText)
         $(this).toggleClass("active");
         $(this).siblings().removeClass("active");
     })
+    var expandIcon = Jtemplate.find('.expand-icon')
+    Jtemplate.find('.base-name').on('click', function(){
+        if(Jtemplate.hasClass("expanded")){
+            expandIcon.animate({rotate: "0deg"}, 300)
+            Jtemplate.removeClass("expanded")
+            setTimeout(()=>{window.api.send("resize", getHeight())}, 0)
+            Jtemplate.animate({height: "65px"}, 300)
+        }else{
+            expandIcon.animate({rotate: "180deg"}, 300)
+            Jtemplate.addClass("expanded")
+            window.api.send("resize", getHeight())
+            Jtemplate.animate({height: "235px"}, 300)
+            
+        }
+        
+    })
+
+    var canvas = Jtemplate.find(".candlestickChart")[0]
+    
+    new CandlestickChart(canvas, symbol, Jtemplate);
 
 
-    var lastPrice = 0
+    var priceHistory = 0
     setInterval(async ()=>{
         var priceData = await getSymbolPrice(symbol, Jtemplate.attr("data-period"))
         const lastPrice = parseFloat(priceData.lastPrice);
@@ -163,10 +200,10 @@ const appendWidget = async (data) => {
         price.text(formattedPrice);
         percentage.text(`${changeValue} (${changePercent})`);
 
-        updateClass(price, priceData.lastPrice, lastPrice);
+        updateClass(price, priceData.lastPrice, priceHistory);
         updateClass(percentage, priceData.priceChangePercent, 0);
 
-        lastPrice = priceData.lastPrice
+        priceHistory = priceData.lastPrice
     }, 800)
 
     var marketData = []

@@ -1,6 +1,6 @@
 {
   "name": "cryptowidget",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Cryptocurrency widget displaying real-time prices and trading recommendations based on bid and ask analysis.",
   "main": "main.js",
   "scripts": {
@@ -37,7 +37,7 @@
   },
   "homepage": "https://github.com/D4rkTT/cryptowidget#readme",
   "devDependencies": {
-    "electron": "^35.0.0",
-    "electron-builder": "^25.1.8"
+    "electron": "^37.3.1",
+    "electron-builder": "^26.0.12"
   }
 }

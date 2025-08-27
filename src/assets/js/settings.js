@@ -8,7 +8,7 @@
  }
  document.getElementById('position').addEventListener('change', updatePositionInputs);
 
- function createCoinRow(coin = '', currency = 'USDT', average = 15) {
+ function createCoinRow(coin = '', currency = 'USDT', average = 1) {
      const row = document.createElement('div');
      row.className = 'coin-row';
      row.innerHTML = `
@@ -53,16 +53,17 @@
      const cryptoList = Array.from(coinRows).map(row => ({
          coin: row.querySelector('.coin-name').value.trim() || 'BTC',
          currency: row.querySelector('.coin-currency').value.trim() || 'USDT',
-         average: parseInt(row.querySelector('.coin-average').value) || 15
+         average: parseInt(row.querySelector('.coin-average').value) || 1
      }));
      const posType = document.getElementById('position').value;
      const settings = {
-         version: "1.0.0",
+         version: "1.0.1",
          position: {
              type: posType,
              x: parseInt(document.getElementById('positionX').value) || 0,
              y: parseInt(document.getElementById('positionY').value) || 0
          },
+         alwaysOnTop: document.getElementById('alwaysOnTop').checked,
          cryptoList
      };
      if (ipc) ipc.send('apply-settings', settings);
@@ -71,7 +72,8 @@
  function loadSettings(settings) {
      document.getElementById('position').value = settings.position.type;
      document.getElementById('positionX').value = settings.position.x;
-     document.getElementById('positionY').value = settings.position.y;
+     document.getElementById('positionY').value = settings.position.y; //alwaysOnTop
+     if(settings.alwaysOnTop) document.getElementById('alwaysOnTop').checked = true
      updatePositionInputs();
      const coinList = document.getElementById('coinList');
      coinList.innerHTML = '';

@@ -8,16 +8,17 @@ const configDir = path.join(os.homedir(), "Documents", appName);
 const configFile = path.join(configDir, "config.json");
 
 const defaultConfig = {
-  version: "1.0.0",
+  version: "1.0.1",
   position:{
     type: "top-right", // "custom", "top-right", "bottom-right", "bottom-left", "top-left"
     x: 0,
     y: 0
   },
+  alwaysOnTop: false,
   cryptoList: [{
     coin: "BTC",
     currency: "USDT",
-    average: 15
+    average: 1
   }]
 };
 
@@ -43,7 +44,6 @@ function loadConfigFile() {
   try {
     const data = fs.readFileSync(configFile, "utf-8");
     var jsonData = JSON.parse(data);
-    
     if (!jsonData.version || jsonData.version !== defaultConfig.version) {
         fs.writeFileSync(configFile, JSON.stringify(defaultConfig, null, 2), "utf-8");
         return defaultConfig;

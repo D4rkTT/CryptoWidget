@@ -6,10 +6,10 @@ const DEBUG = process.argv[2] && process.argv[2] === '-d'
 var mainWindow
 var settingsWindow
 var config
+const WIDTH = 290
 
 function createWindow (px, py) {
-    var WIDTH = 380
-    var HEIGHT = 104 * config.cryptoList.length
+    var HEIGHT = 70 * config.cryptoList.length
     var x = 0
     var y = 0
     switch(config.position.type){
@@ -38,7 +38,7 @@ function createWindow (px, py) {
     mainWindow = new BrowserWindow({
         width: WIDTH,
         height: HEIGHT,
-        alwaysOnTop: true,
+        alwaysOnTop: config.alwaysOnTop,
         roundedCorners: true,
         frame: false,
         transparent:true,
@@ -56,7 +56,7 @@ function createWindow (px, py) {
         }
     })
 
-    mainWindow.setAlwaysOnTop(true, 'screen-saver');
+    mainWindow.setAlwaysOnTop(config.alwaysOnTop, 'screen-saver');
     mainWindow.loadFile(path.join(__dirname, "src", "index.html"))
 
     mainWindow.on('moved', () => {
@@ -175,4 +175,8 @@ ipcMain.on('apply-settings', (event, newConfig) => {
     config = newConfig
     updateConfigFile(config)
     recreateMainWindow()
+})
+
+ipcMain.on('resize', (event, newHeight) => {
+    mainWindow.setSize(WIDTH, newHeight, 300)
 })
