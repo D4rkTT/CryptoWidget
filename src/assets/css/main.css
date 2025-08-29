@@ -229,7 +229,7 @@ li.active {
 
 .trading-charts {
     width: 90%;
-    height: 120px;
+    height: 105px;
 }
 
 .expand-icon {
@@ -242,4 +242,25 @@ li.active {
     background: #fff;
     border-radius: 5px;
     margin: 5px 2px 5px 2px;
+}
+
+.candle-stats {
+    font-size: 9px;
+    font-weight: 400;
+    color: #a3a3a3;
+    width: 90%;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.candle-stats .greenc {
+    color: #4FFFB3;
+    font-weight: 500 !important;
+}
+
+.candle-stats .redc {
+    color: #FF4F4F;
+    font-weight: 500 !important;
 }

@@ -115,7 +115,9 @@ const appendWidget = async (data) => {
                         </div>
                         <div class="bottom">
                             <div class="trading-container">
+                                <div class="candle-stats"></div>
                                 <div class="trading-charts">
+                                    
                                     <canvas class="candlestickChart"></canvas>
                                 </div>
                                 <div class="trading-book">
@@ -164,7 +166,7 @@ const appendWidget = async (data) => {
         if(Jtemplate.hasClass("expanded")){
             expandIcon.animate({rotate: "0deg"}, 300)
             Jtemplate.removeClass("expanded")
-            setTimeout(()=>{window.api.send("resize", getHeight())}, 0)
+            setTimeout(()=>{window.api.send("resize", getHeight())}, 300)
             Jtemplate.animate({height: "65px"}, 300)
         }else{
             expandIcon.animate({rotate: "180deg"}, 300)

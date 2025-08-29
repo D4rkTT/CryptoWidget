@@ -1,8 +1,10 @@
 class CandlestickChart {
-    constructor(canvas, symbol, interval) {
+    constructor(canvas, symbol, template) {
         this.symbol = symbol;
-        this.interval = interval;
+        this.template = template;
         this.canvas = canvas;
+
+        this.statsElement = null
 
         this.ctx = null;
         this.data = [];
@@ -18,8 +20,13 @@ class CandlestickChart {
         this.endTime = 0;
         this.timeRange = 0;
 
+        this.setupElements()
         this.setupCanvas(this.canvas);
         this.startAutoUpdate()
+    }
+
+    setupElements(){
+        this.statsElement = this.template.find('.candle-stats')
     }
 
     setupCanvas(canvas) {
@@ -42,7 +49,7 @@ class CandlestickChart {
 
     async fetchData() {
         const symbol = this.symbol;
-        var interval = this.interval.attr("data-period").toLowerCase();
+        var interval = this.template.attr("data-period").toLowerCase();
 
         try {
             if(interval == "7d") interval = "1w"
@@ -75,8 +82,23 @@ class CandlestickChart {
         }));
         this.calculateScales();
         this.render();
+        this.updatePrice();
     }
 
+    updatePrice() {
+        var lastCandle = this.data[this.data.length - 1]
+        let open = lastCandle.open.toFixed(2),
+        close = lastCandle.close.toFixed(2),
+        high = lastCandle.high.toFixed(2),
+        low = lastCandle.low.toFixed(2),
+        change = (((lastCandle.close / lastCandle.open) * 100) - 100).toFixed(2);
+
+        const isGreen = lastCandle.close >= lastCandle.open;
+        const color = isGreen ? 'greenc' : 'redc';
+        let statsText = `Open: <span class="${color}">${open}</span> High: <span class="${color}">${high}</span> Low: <span class="${color}">${low}</span> Change: <span class="${color}">${change}%</span>`
+        this.statsElement.html(statsText)
+
+    }
 
     calculateScales() {
         if (this.data.length === 0) return;

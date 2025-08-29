@@ -178,5 +178,5 @@ ipcMain.on('apply-settings', (event, newConfig) => {
 })
 
 ipcMain.on('resize', (event, newHeight) => {
-    mainWindow.setSize(WIDTH, newHeight, 300)
+    mainWindow.setSize(WIDTH, newHeight, false)
 })
