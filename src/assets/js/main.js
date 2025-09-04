@@ -16,13 +16,13 @@ const getSymbolBookTicker = async (symbol) => {
     return res
 }
 
-const updateClass = (element1, current, previous) => {
-    element1.removeClass("green red");
+const updateClass = (element1, current, previous, fclass = "green", sclass = "red") => {
+    element1.removeClass(`${fclass} ${sclass}`);
 
     if (current > previous) {
-        element1.addClass("green");
+        element1.addClass(`${fclass}`);
     } else if (current < previous) {
-        element1.addClass("red");
+        element1.addClass(`${sclass}`);
     }
 }
 
@@ -133,7 +133,7 @@ const appendWidget = async (data) => {
                                 <li>1M</li>
                                 <li class="active">15M</li>
                                 <li>1H</li>
-                                <li>6H</li>
+                                <li>4H</li>
                                 <li>1D</li>
                                 <li>7D</li>
                             </ul>
@@ -204,6 +204,7 @@ const appendWidget = async (data) => {
 
         updateClass(price, priceData.lastPrice, priceHistory);
         updateClass(percentage, priceData.priceChangePercent, 0);
+        updateClass(Jtemplate, priceData.priceChangePercent, 0, "greenb", "redb");
 
         priceHistory = priceData.lastPrice
     }, 800)
